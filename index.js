@@ -9,8 +9,11 @@ function OBJExporter () {};
 OBJExporter.prototype = {
 
    constructor: OBJExporter,
-
-   parse: function ( object ) {
+   
+   // options: {
+   //   includeMaterials: boolean, // exports with pointer to material file
+   // }
+   parse: function ( object, options ) {
 
        var output = '';
 
@@ -50,7 +53,14 @@ OBJExporter.prototype = {
 
                // name of the mesh object
                output += 'o ' + mesh.name + '\n';
-
+              
+               if (options.includeMaterials) {
+                  
+                   // include texture file
+                   output += 'usemtl ' + mesh.name + '\n';
+                  
+               }
+              
                // vertices
 
                if( vertices !== undefined ) {
