@@ -118,10 +118,16 @@ OBJExporter.prototype = {
 
                        // transfrom the normal to world space
                        normal.applyMatrix3( normalMatrixWorld );
-
-                       // transform the normal to export format
-                       output += 'vn ' + normal.x + ' ' + normal.y + ' ' + normal.z + '\n';
-
+                        
+                       // don't add any normals that are messed up "NaN"
+                       const hasNaNValues = Object.values(normal).filter(pos => pos === "NaN");
+                       
+                       if (hasNaNValues) {
+                           console.error("Found bad normal value", normal);
+                       } else {
+                          // transform the vertex to export format
+                          output += 'vn ' + normal.x + ' ' + normal.y + ' ' + normal.z + '\n';
+                       }
                    }
 
                }
