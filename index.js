@@ -2,6 +2,7 @@ var THREE = require( 'three' );
 
 /**
 * @author mrdoob / http://mrdoob.com/
+*   fixed by Sam
 */
 
 function OBJExporter () {};
@@ -74,9 +75,15 @@ OBJExporter.prototype = {
                        // transfrom the vertex to world space
                        vertex.applyMatrix4( mesh.matrixWorld );
 
-                       // transform the vertex to export format
-                       output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z + '\n';
-
+                       // don't add any vertices that are messed up "NaN"
+                       const hasNaNValues = Object.values(vertex).filter(pos => pos === "NaN");
+                       
+                       if (hasNaNValues) {
+                           console.error("Found bad vertex value", vertex);
+                       } else {
+                            // transform the vertex to export format
+                            output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z + '\n';
+                       }
                    }
 
                }
