@@ -76,10 +76,10 @@ OBJExporter.prototype = {
                        vertex.applyMatrix4( mesh.matrixWorld );
 
                        // don't add any vertices that are messed up "NaN"
-                       const hasNaNValues = Object.values(vertex).filter(pos => pos === "NaN");
+                       const hasNaNValues = Object.values(vertex).some(pos => isNaN(pos));
                        
                        if (hasNaNValues) {
-                           console.error("Found bad vertex value", vertex);
+                            console.log("found NaN vertex", vertex);
                        } else {
                             // transform the vertex to export format
                             output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z + '\n';
@@ -118,12 +118,13 @@ OBJExporter.prototype = {
 
                        // transfrom the normal to world space
                        normal.applyMatrix3( normalMatrixWorld );
-                        
+                       
                        // don't add any normals that are messed up "NaN"
-                       const hasNaNValues = Object.values(normal).filter(pos => pos === "NaN");
+                       const hasNaNValues = Object.values(normal).some(pos => isNaN(pos));
                        
                        if (hasNaNValues) {
-                           console.error("Found bad normal value", normal);
+                            // do not add
+                            console.log("found NaN normal", normal);
                        } else {
                           // transform the vertex to export format
                           output += 'vn ' + normal.x + ' ' + normal.y + ' ' + normal.z + '\n';
