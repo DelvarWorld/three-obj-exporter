@@ -13,3 +13,10 @@ var result = exporter.parse(scene);
 ```
 
 See [the offical Three.js example](http://threejs.org/examples/webgl_exporter_obj.html) for more information and usage.
+
+## Options
+
+To include a reference to MTL texture files for an object, pass this option:
+```
+var result = exporter.parse(scene, { includeMaterials: true });
+```

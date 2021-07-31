@@ -2,6 +2,7 @@ var THREE = require( 'three' );
 
 /**
 * @author mrdoob / http://mrdoob.com/
+*   fixed by Sam
 */
 
 function OBJExporter () {};
@@ -9,8 +10,11 @@ function OBJExporter () {};
 OBJExporter.prototype = {
 
    constructor: OBJExporter,
-
-   parse: function ( object ) {
+   
+   // options: {
+   //   includeMaterials: boolean, // exports with pointer to material file
+   // }
+   parse: function ( object, options ) {
 
        var output = '';
 
@@ -50,7 +54,14 @@ OBJExporter.prototype = {
 
                // name of the mesh object
                output += 'o ' + mesh.name + '\n';
-
+              
+               if (options.includeMaterials) {
+                  
+                   // include texture file
+                   output += 'usemtl ' + mesh.name + '\n';
+                  
+               }
+              
                // vertices
 
                if( vertices !== undefined ) {
@@ -64,9 +75,15 @@ OBJExporter.prototype = {
                        // transfrom the vertex to world space
                        vertex.applyMatrix4( mesh.matrixWorld );
 
-                       // transform the vertex to export format
-                       output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z + '\n';
-
+                       // don't add any vertices that are messed up "NaN"
+                       const hasNaNValues = Object.values(vertex).some(pos => isNaN(pos));
+                       
+                       if (hasNaNValues) {
+                            console.log("found NaN vertex", vertex);
+                       } else {
+                            // transform the vertex to export format
+                            output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z + '\n';
+                       }
                    }
 
                }
@@ -101,10 +118,17 @@ OBJExporter.prototype = {
 
                        // transfrom the normal to world space
                        normal.applyMatrix3( normalMatrixWorld );
-
-                       // transform the normal to export format
-                       output += 'vn ' + normal.x + ' ' + normal.y + ' ' + normal.z + '\n';
-
+                       
+                       // don't add any normals that are messed up "NaN"
+                       const hasNaNValues = Object.values(normal).some(pos => isNaN(pos));
+                       
+                       if (hasNaNValues) {
+                            // do not add
+                            console.log("found NaN normal", normal);
+                       } else {
+                          // transform the vertex to export format
+                          output += 'vn ' + normal.x + ' ' + normal.y + ' ' + normal.z + '\n';
+                       }
                    }
 
                }
